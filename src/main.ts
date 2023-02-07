@@ -1,83 +1,18 @@
 import "./style.css";
-import typescriptLogo from "./typescript.svg";
-import { setupCounter } from "./counter";
-import jscadModeling from "@jscad/modeling";
-import jscadReglRenderer from "@jscad/regl-renderer";
 
-// document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-//   <div>
-//     <a href="https://vitejs.dev" target="_blank">
-//       <img src="/vite.svg" class="logo" alt="Vite logo" />
-//     </a>
-//     <a href="https://www.typescriptlang.org/" target="_blank">
-//       <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-//     </a>
-//     <h1>Vite + TypeScript</h1>
-//     <div class="card">
-//       <button id="counter" type="button"></button>
-//     </div>
-//     <p class="read-the-docs">
-//       Click on the Vite and TypeScript logos to learn more
-//     </p>
-//   </div>
-// `
+import {
+  prepareRender,
+  drawCommands,
+  cameras,
+  controls,
+  entitiesFromSolids,
+} from "@jscad/regl-renderer";
 
-// setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
-const { booleans, colors, primitives } = jscadModeling; // modeling comes from the included MODELING library
-
-const { intersect, subtract } = booleans;
-const { colorize } = colors;
-const { cube, cuboid, line, sphere, star } = primitives;
-
-const demo = (parameters: any) => {
-  const logo = [
-    colorize(
-      [1.0, 0.4, 1.0],
-      subtract(cube({ size: 300 }), sphere({ radius: 200 }))
-    ),
-    colorize(
-      [1.0, 1.0, 0],
-      intersect(sphere({ radius: 130 }), cube({ size: 210 }))
-    ),
-  ];
-
-  const transpCube = colorize(
-    [1, 0, 0, 0.75],
-    cuboid({
-      size: [100 * parameters.scale, 100, 210 + 200 * parameters.scale],
-    })
-  );
-  const star2D = star({ vertices: 8, innerRadius: 300, outerRadius: 400 });
-  const line2D = colorize(
-    [1.0, 0, 0],
-    line([
-      [260, 260],
-      [-260, 260],
-      [-260, -260],
-      [260, -260],
-      [260, 260],
-    ])
-  );
-  // some colors are intentionally without alpfa channel to test geom2ToGeometries will add alpha channel
-  const colorChange = [
-    [1, 0, 0, 1],
-    [1, 0.5, 0],
-    [1, 0, 1],
-    [0, 1, 0],
-    [0, 0, 0.7],
-  ];
-  star2D.sides.forEach((side: any, i) => {
-    if (i >= 2) side.color = colorChange[i % colorChange.length];
-  });
-
-  return [transpCube, star2D, line2D] as any;
-};
+import { design } from "./design";
 
 // ********************
 // Renderer configuration and initiation.
 // ********************
-const { prepareRender, drawCommands, cameras, controls, entitiesFromSolids } =
-  jscadReglRenderer;
 
 const perspectiveCamera = cameras.perspective;
 const orbitControls = controls.orbit;
@@ -126,7 +61,7 @@ const axisOptions = {
   // zColor: [0, 0, 0, 1]
 };
 
-const entities = entitiesFromSolids({}, demo({ scale: 1 }));
+const entities = entitiesFromSolids({}, design({ scale: 1 }));
 
 // assemble the options for rendering
 const renderOptions = {

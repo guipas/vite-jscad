@@ -1,6 +1,14 @@
-#jscad{
-  width: 15cm;
-  height: 15cm;
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+#jscad {
+  /* width: 80vw; */
+  height: 80vh;
+  aspect-ratio: 1;
   margin: 0;
   outline: 1px solid black;
 }
